@@ -1,3 +1,5 @@
+import pickle
+
 # Класс Animal (Животное)
 class Animal:
     def __init__(self, name, species):
@@ -73,7 +75,25 @@ class Zoo:
             for employee in self.employees:
                 print(employee)
 
-# Пример использования композиции и полиморфизма
+    # Метод для сохранения информации о зоопарке в файл
+    def save_to_file(self, filename):
+        with open(filename, 'wb') as file:
+            pickle.dump(self, file)
+        print(f"Информация о зоопарке {self.zoo_name} была сохранена в файл {filename}.")
+
+    # Метод для загрузки информации о зоопарке из файла
+    @staticmethod
+    def load_from_file(filename):
+        try:
+            with open(filename, 'rb') as file:
+                zoo = pickle.load(file)
+            print(f"Информация о зоопарке {zoo.zoo_name} была загружена из файла {filename}.")
+            return zoo
+        except FileNotFoundError:
+            print(f"Файл {filename} не найден.")
+            return None
+
+# Пример использования композиции, сохранения и загрузки
 
 # Создаем зоопарк
 my_zoo = Zoo("Central Zoo")
@@ -94,11 +114,16 @@ my_zoo.add_animal(lion)
 my_zoo.add_employee(zookeeper)
 my_zoo.add_employee(veterinarian)
 
-# Симулируем действия сотрудников
-zookeeper.feed_animal(elephant)  # Alice кормит Dumbo
-lion.health = "sick"  # Задаем статус "больной" для льва
-veterinarian.heal_animal(lion)  # Dr. Bob лечит Симбу
-
-# Отображаем всех животных и сотрудников
+# Отображаем текущую информацию о зоопарке
 my_zoo.display_animals()
 my_zoo.display_employees()
+
+# Сохраняем информацию о зоопарке в файл
+my_zoo.save_to_file('zoo_data.pkl')
+
+# Загружаем информацию о зоопарке из файла
+loaded_zoo = Zoo.load_from_file('zoo_data.pkl')
+
+if loaded_zoo:
+    loaded_zoo.display_animals()
+    loaded_zoo.display_employees()
